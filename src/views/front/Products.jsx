@@ -1,6 +1,7 @@
 
 import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router';
+import { convertMoney } from '../../utils/common';
 import axios from 'axios';
 
 export default function Products(){
@@ -48,7 +49,7 @@ export default function Products(){
                                         <h5 className="card-title mb-4">{product.title}</h5>
                                         <p className="card-text mb-4">{product.description}</p>
                                         <p className="card-text">
-                                            ${product.price} / <small className="text-body-secondary">{product.unit}</small>
+                                            ${ convertMoney(product.price) } / <small className="text-body-secondary">{product.unit}</small>
                                         </p>
                                         <button type='button' className='btn btn-primary' onClick={()=>{handleProductDetail(product.id)}}>查看更多</button>
                                     </div>

@@ -24,7 +24,7 @@ export default function SingleProduct(){
                 setProduct(response.data.product);
             } 
             catch (error) {
-                console.log("取得商品詳細資料失敗:" + error.respons?.message);
+                console.log("取得商品詳細資料失敗:" + error.response?.data.message);
                 alert("取得商品詳細資料失敗!請重新登入或請洽客服 : 00-1234-5678");
             }
         }
@@ -32,6 +32,26 @@ export default function SingleProduct(){
         getProduct(id)
 
     },[ id, API_BASE, API_PATH ]);
+
+    const addProduct = async (productId, productQty=1) => {
+
+        const data = {
+            product_id: productId,
+            qty: productQty,
+        }
+
+        // console.log(data)
+
+        try {
+            const response = await axios.post(`${API_BASE}/api/${API_PATH}/cart`, { data });
+            // console.log(response.data.data);
+            const { title } = response.data.data.product;
+            alert(`${title} x ${productQty}加入購物車!`);
+        } catch (error) {
+            console.log("加入購物車失敗:" + error);
+            alert('加入購物車失敗: ' + error.response?.data.message)
+        }
+    }
 
     return !product ? (<h2>查無此產品</h2>) : (
         <div className="contanier">
@@ -44,6 +64,7 @@ export default function SingleProduct(){
                         <p className="card-text">
                             ${product.price} / <small className="text-body-secondary">{product.unit}</small>
                         </p>
+                        <button type='button' className='btn btn-primary' onClick={()=>{addProduct(product.id)}}>加入購物車</button>
                     </div>
                 </div>
             </div>
