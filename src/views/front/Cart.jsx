@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { convertMoney } from '../../utils/common';
+import { convertMoney } from "../../utils/common";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -9,19 +9,15 @@ export default function Cart() {
   const [cart, setCart] = useState([]);
   const EMPTY_CART = { carts: [], total: 0, final_total: 0 };
 
-  useEffect(() => {
-    const getCart = async () => {
-      try {
-        const response = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
-        // console.log(response.data.data);
-        setCart(response.data.data);
-      } catch (error) {
-        alert("加入購物車失敗: " + error.response?.data.message);
-      }
-    };
-    getCart();
-  }, []);
-
+  const getCart = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
+      // console.log(response.data.data);
+      setCart(response.data.data);
+    } catch (error) {
+      alert("加入購物車失敗: " + error.response?.data.message);
+    }
+  };
   // 修改商品數量
   const updateProduct = async (cartId, productId, productQty = 1) => {
     try {
@@ -39,6 +35,7 @@ export default function Cart() {
         const response = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
         // console.log(response.data.data);
         setCart(response.data.data);
+        getCart();
       } catch (error) {
         alert("加入購物車失敗: " + error.response?.data.message);
       }
@@ -54,14 +51,7 @@ export default function Cart() {
         `${API_BASE}/api/${API_PATH}/cart/${cartId}`,
       );
       // console.log("已刪除項目:" + response);
-      try {
-        const response = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
-        // console.log(response.data.data);
-        console.log(response)
-        setCart(response.data.data);
-      } catch (error) {
-        alert("加入購物車失敗: " + error.response?.data.message);
-      }
+      getCart();
     } catch (error) {
       console.log(error.response.data);
     }
@@ -71,27 +61,26 @@ export default function Cart() {
   const deleteCart = async () => {
     try {
       const response = await axios.delete(`${API_BASE}/api/${API_PATH}/carts`);
-      try {
-        const response = await axios.get(`${API_BASE}/api/${API_PATH}/cart`);
-        console.log(response)
-        setCart(response.data.data);
-        // console.log(response.data.data);
-      } catch (error) {
-        alert("加入購物車失敗: " + error.response?.data.message);
-      }
+      getCart();
     } catch (error) {
       console.log(error.response.data);
     }
   };
 
+  useEffect(() => {
+    getCart();
+  }, []);
+
   return (
     <div className="container">
       <h2>購物車列表</h2>
       <div className="text-end mt-4">
-        <button 
-            type="button" 
-            className="btn btn-outline-danger"
-            onClick = {() => {deleteCart()}}
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => {
+            deleteCart();
+          }}
         >
           清空購物車
         </button>
@@ -129,13 +118,29 @@ export default function Cart() {
                       defaultValue={cartItem.qty}
                       aria-label="Sizing example input"
                       aria-describedby="inputGroup-sizing-sm"
-                      onBlur={(e) =>
-                        updateProduct(
-                          cartItem.id,
-                          cartItem.product_id,
-                          Number(e.target.value),
-                        )
-                      }
+                      min="0"
+                      onBlur={(e) => {
+                        const num = e.target.value;
+
+                        // 空值或非數字：回復原本 qty，避免一清空就被當 0 刪掉
+                        if (num === "" || Number.isNaN(Number(num))) {
+                          e.target.value = cartItem.qty;
+                          return;
+                        }
+
+                        const qty = Number(num);
+
+                        // 數量為0直接刪除該筆
+                        if (qty <= 0) {
+                          deleteProduct(cartItem.id);
+                          return;
+                        }
+
+                        // 數量沒變就不打 API
+                        if (qty === cartItem.qty) return;
+
+                        updateProduct(cartItem.id, cartItem.product_id, qty);
+                      }}
                     />
                     <span
                       className="input-group-text"
@@ -145,7 +150,9 @@ export default function Cart() {
                     </span>
                   </div>
                 </td>
-                <td className="text-end">$ { convertMoney(cartItem.final_total) }</td>
+                <td className="text-end">
+                  $ {convertMoney(cartItem.final_total)}
+                </td>
               </tr>
             );
           })}
@@ -155,7 +162,9 @@ export default function Cart() {
             <td className="text-end" colSpan="3">
               總計
             </td>
-            <td className="text-end">$ { convertMoney(cart?.final_total ?? 0) }</td>
+            <td className="text-end">
+              $ {convertMoney(cart?.final_total ?? 0)}
+            </td>
           </tr>
         </tfoot>
       </table>
