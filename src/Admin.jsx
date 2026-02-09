@@ -24,20 +24,7 @@ const INITIAL_TEMPLATE_DATA = {
   imagesUrl: [],
   size:""
 };
-// 1. 頁面載入
-//    - 檢查 Cookie Token
-//    - 驗證管理員權限
-//    - 載入產品列表
 
-// 2. 使用者操作
-//    - 點擊「新增 / 編輯 / 刪除」
-//    - 設定 modalType
-//    - 開啟對應 Modal
-
-// 3. Modal 操作
-//    - 編輯表單狀態（templateData）
-//    - 送出後呼叫對應 API
-//    - 成功後關閉 Modal 並重新載入資料
 
 function App() {
   

@@ -6,13 +6,19 @@ export default function FrontEndLayout(){
             <header>
                 <ul className="nav">
                     <li className="nav-item">
-                        <Link className="nav-link" to='/'>Home</Link>
+                        <Link className="nav-link" to='/'>首頁</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to='/products'>Products</Link>
+                        <Link className="nav-link" to='/products'>商品列表</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to='/cart'>Cart</Link>
+                        <Link className="nav-link" to='/cart'>購物車</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to='/checkout'>結帳</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to='/login'>登入</Link>
                     </li>
                 </ul>
             </header>
