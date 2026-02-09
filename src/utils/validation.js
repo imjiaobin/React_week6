@@ -22,10 +22,10 @@ export const emailValidation = {
 };
 
 export const telValidation = {
-  required: "請輸入手機號碼",
+  required: "請輸入電話號碼",
   minLength: {
-    value: 10,
-    message: "手機號碼最少10碼",
+    value: 8,
+    message: "手機號碼最少8碼",
   },
   maxLength: {
     value: 10,
